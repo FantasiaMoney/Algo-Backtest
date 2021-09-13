@@ -1,0 +1,38 @@
+const csvFilePath = 'history.csv'
+const csv = require('csvtojson')
+let jsonArray
+
+async function getData() {
+  const jsonArray = await csv().fromFile(csvFilePath)
+  const date = jsonArray.map(item => item.date)
+  return jsonArray
+}
+
+
+function calculateReceiveAmount(totalA, totalB, sendAmount){
+  const K = totalA * totalB
+  const X = sendAmount
+  const A = totalA
+  const B = totalB
+
+  return Math.abs(K /(A+X) - B)
+}
+
+async function test(){
+  jsonArray = await getData()
+  jsonArray.map(item => {
+
+    console.log(
+      `Total A ${Number(item.reserve0).toFixed()}, Total B ${Number(item.reserve1).toFixed()}, send 1 A, estimate receive ${
+        calculateReceiveAmount(Number(item.reserve0).toFixed(), Number(item.reserve1).toFixed(), 1)
+      } of B`
+
+    )
+    return
+  })
+  console.log("_____________________________________")
+  console.log(`Test price Total A 100, Total B 100, send 1 A, estimate receive ${calculateReceiveAmount(100, 100, 1)}`)
+}
+
+getData()
+test()
